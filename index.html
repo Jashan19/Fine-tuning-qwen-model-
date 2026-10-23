@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Intelligence</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #080a0f;
+      color: #f3f5f8;
+      font-family: Arial, sans-serif;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ================= SIDEBAR ================= */
+
+    .sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: #0b0e14;
+      border-right: 1px solid #252b38;
+      padding: 25px 16px;
+    }
+
+    .brand {
+      padding: 0 10px 30px;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+    }
+
+    .brand p {
+      color: #7f8796;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .nav-label {
+      color: #626a79;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 0 10px 10px;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: none;
+      background: #151923;
+      color: #f3f5f8;
+      padding: 11px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    /* ================= MAIN ================= */
+
+    .main {
+      flex: 1;
+      padding: 45px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ================= HEADER ================= */
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 35px;
+    }
+
+    .eyebrow {
+      color: #7f8796;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #8d95a5;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .primary-button {
+      background: #7c8cff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: bold;
+    }
+
+    /* ================= PROJECT CARDS ================= */
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 15px;
+    }
+
+    .project-card {
+      background: #10131a;
+      border: 1px solid #252b38;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 190px;
+      transition: 0.15s;
+    }
+
+    .project-card:hover {
+      border-color: #414a5e;
+      transform: translateY(-1px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .project-card h3 {
+      font-size: 17px;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #8d95a5;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #777;
+    }
+
+    .dot.active {
+      background: #55d68a;
+    }
+
+    .dot.future {
+      background: #e7c86b;
+    }
+
+    .dot.paused {
+      background: #d08a62;
+    }
+
+    .dot.completed {
+      background: #7c8cff;
+    }
+
+    .description {
+      color: #8d95a5;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 20px 0;
+    }
+
+    .open-button {
+      border: none;
+      background: transparent;
+      color: #aeb7ff;
+      font-size: 12px;
+    }
+
+    /* ================= PROJECT PAGE ================= */
+
+    .back-button {
+      border: none;
+      background: transparent;
+      color: #8d95a5;
+      margin-bottom: 25px;
+    }
+
+    .project-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #252b38;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      border: none;
+      background: transparent;
+      color: #8d95a5;
+      padding: 12px 16px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab.active {
+      color: white;
+      border-bottom-color: #7c8cff;
+    }
+
+    /* ================= PANELS ================= */
+
+    .panel {
+      background: #10131a;
+      border: 1px solid #252b38;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    /* ================= NOTES ================= */
+
+    textarea.note-input {
+      width: 100%;
+      min-height: 240px;
+      resize: vertical;
+      background: #0b0e14;
+      color: white;
+      border: 1px solid #252b38;
+      border-radius: 8px;
+      padding: 15px;
+      outline: none;
+      line-height: 1.6;
+    }
+
+    textarea.note-input:focus {
+      border-color: #4b5670;
+    }
+
+    .note-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .hint {
+      color: #687181;
+      font-size: 11px;
+    }
+
+    .save-button {
+      border: 1px solid #252b38;
+      background: #151923;
+      color: white;
+      border-radius: 7px;
+      padding: 9px 14px;
+    }
+
+    .note {
+      padding: 15px 0;
+      border-bottom: 1px solid #252b38;
+    }
+
+    .note:last-child {
+      border-bottom: none;
+    }
+
+    .note-date {
+      color: #687181;
+      font-size: 10px;
+      margin-bottom: 8px;
+    }
+
+    .note-text {
+      color: #cdd2dc;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* ================= OVERVIEW ================= */
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 18px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    .field-label {
+      color: #687181;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .field-value {
+      color: #dce0e8;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ================= CONNECTIONS ================= */
+
+    .connection {
+      border: 1px solid #252b38;
+      background: #0b0e14;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .connection-name {
+      color: #dce0e8;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .connection-reason {
+      color: #7f8796;
+      font-size: 11px;
+      line-height: 1.5;
+      margin-top: 5px;
+    }
+
+    /* ================= PEOPLE ================= */
+
+    .person {
+      border: 1px solid #252b38;
+      background: #0b0e14;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .person-type {
+      color: #abb4ff;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .person-name {
+      color: #dce0e8;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .person-reason {
+      color: #7f8796;
+      font-size: 11px;
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    /* ================= TAGS ================= */
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      background: rgba(124, 140, 255, 0.12);
+      color: #abb4ff;
+      border: 1px solid rgba(124, 140, 255, 0.2);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+
+    /* ================= EMPTY ================= */
+
+    .empty {
+      border: 1px dashed #252b38;
+      padding: 45px;
+      text-align: center;
+      color: #8d95a5;
+      border-radius: 10px;
+    }
+
+    .empty h3 {
+      color: #cdd2dc;
+      margin-bottom: 8px;
+    }
+
+    .empty p {
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    /* ================= MODAL ================= */
+
+    .modal-background {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-background.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #11151d;
+      border: 1px solid #252b38;
+      border-radius: 12px;
+      padding: 25px;
+    }
+
+    .modal h3 {
+      font-size: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #8d95a5;
+      font-size: 11px;
+      margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: #0a0d13;
+      color: white;
+      border: 1px solid #252b38;
+      border-radius: 7px;
+      padding: 10px;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: #4b5670;
+    }
+
+    /* Dynamic rows */
+
+    .dynamic-section {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid #252b38;
+    }
+
+    .dynamic-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .dynamic-header h4 {
+      font-size: 12px;
+      color: #dce0e8;
+    }
+
+    .add-small {
+      border: 1px solid #252b38;
+      background: #151923;
+      color: #abb4ff;
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-size: 10px;
+    }
+
+    .dynamic-row {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr auto;
+      gap: 7px;
+      margin-bottom: 7px;
+    }
+
+    .dynamic-row.people-row {
+      grid-template-columns: 0.8fr 1fr 1.2fr auto;
+    }
+
+    .dynamic-row input {
+      width: 100%;
+    }
+
+    .remove-small {
+      border: 1px solid #252b38;
+      background: transparent;
+      color: #7f8796;
+      border-radius: 6px;
+      width: 32px;
+    }
+
+    .remove-small:hover {
+      color: #ff7f7f;
+      border-color: #5c3434;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 25px;
+    }
+
+    .cancel-button {
+      background: transparent;
+      color: #8d95a5;
+      border: 1px solid #252b38;
+      border-radius: 7px;
+      padding: 9px 14px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 800px) {
+
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 25px 18px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .dynamic-row,
+      .dynamic-row.people-row {
+        grid-template-columns: 1fr;
+      }
+
+      .remove-small {
+        height: 32px;
+        width: 100%;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <h1>Project Intelligence</h1>
+      <p>Personal project system</p>
+    </div>
+
+    <div class="nav-label">
+      Workspace
+    </div>
+
+    <button
+      class="nav-button"
+      onclick="goHome()"
+    >
+      Projects
+    </button>
+
+  </aside>
+
+
+  <!-- ================= MAIN ================= -->
+
+  <main class="main">
+
+    <!-- ================= HOME ================= -->
+
+    <section
+      id="homePage"
+      class="container"
+    >
+
+      <div class="header">
+
+        <div>
+
+          <div class="eyebrow">
+            Workspace / Projects
+          </div>
+
+          <h2>
+            Your Projects
+          </h2>
+
+          <p class="subtitle">
+            Keep projects structured while preserving the raw thinking behind them.
+          </p>
+
+        </div>
+
+        <button
+          class="primary-button"
+          onclick="openCreateModal()"
+        >
+          + New Project
+        </button>
+
+      </div>
+
+      <div
+        id="projectGrid"
+        class="project-grid"
+      ></div>
+
+    </section>
+
+
+    <!-- ================= PROJECT PAGE ================= -->
+
+    <section
+      id="projectPage"
+      class="container hidden"
+    >
+
+      <button
+        class="back-button"
+        onclick="goHome()"
+      >
+        ← All projects
+      </button>
+
+
+      <div class="project-title">
+
+        <h2 id="projectName"></h2>
+
+        <span class="status">
+
+          <span
+            id="projectDot"
+            class="dot"
+          ></span>
+
+          <span id="projectStatus"></span>
+
+        </span>
+
+      </div>
+
+
+      <!-- TABS -->
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          onclick="showTab('notes', this)"
+        >
+          Notes
+        </button>
+
+        <button
+          class="tab"
+          onclick="showTab('overview', this)"
+        >
+          Overview
+        </button>
+
+        <button
+          class="tab"
+          onclick="showTab('chat', this)"
+        >
+          Chat
+        </button>
+
+      </div>
+
+
+      <!-- ================= NOTES ================= -->
+
+      <div id="notesTab">
+
+        <div class="panel">
+
+          <h3>
+            Write a note
+          </h3>
+
+          <textarea
+            id="noteInput"
+            class="note-input"
+            placeholder="Write freely about what you're thinking, planning, learning, building, changing, or deciding..."
+          ></textarea>
+
+          <div class="note-actions">
+
+            <span class="hint">
+              Raw note · preserved as written
+            </span>
+
+            <button
+              class="save-button"
+              onclick="saveNote()"
+            >
+              Save note
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            History
+          </h3>
+
+          <div id="notesHistory"></div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================= OVERVIEW ================= -->
+
+      <div
+        id="overviewTab"
+        class="hidden"
+      >
+
+        <div class="overview-grid">
+
+          <!-- LEFT -->
+
+          <div>
+
+            <div class="panel">
+
+              <h3>
+                Project Profile
+              </h3>
+
+
+              <div class="field">
+
+                <div class="field-label">
+                  Description
+                </div>
+
+                <div
+                  id="description"
+                  class="field-value"
+                ></div>
+
+              </div>
+
+
+              <div class="field">
+
+                <div class="field-label">
+                  Trajectory
+                </div>
+
+                <div
+                  id="trajectory"
+                  class="field-value"
+                ></div>
+
+              </div>
+
+
+              <div class="field">
+
+                <div class="field-label">
+                  Future Scope
+                </div>
+
+                <div
+                  id="futureScope"
+                  class="field-value"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <!-- CONNECTED FIELDS -->
+
+            <div class="panel">
+
+              <h3>
+                Connected Fields
+              </h3>
+
+              <div id="connectionsList"></div>
+
+            </div>
+
+
+            <!-- PEOPLE -->
+
+            <div class="panel">
+
+              <h3>
+                People To Approach
+              </h3>
+
+              <div id="peopleList"></div>
+
+            </div>
+
+          </div>
+
+
+          <!-- RIGHT -->
+
+          <div>
+
+            <div class="panel">
+
+              <h3>
+                Skills Needed
+              </h3>
+
+              <div
+                id="skills"
+                class="tags"
+              ></div>
+
+            </div>
+
+
+            <div class="panel">
+
+              <h3>
+                Project Status
+              </h3>
+
+              <div class="field">
+
+                <div class="field-label">
+                  Type
+                </div>
+
+                <div
+                  id="statusValue"
+                  class="field-value"
+                ></div>
+
+              </div>
+
+            </div>
+
+
+            <div class="panel">
+
+              <h3>
+                Emerging Clusters
+              </h3>
+
+              <div
+                id="clusters"
+                class="tags"
+              ></div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ================= CHAT ================= -->
+
+      <div
+        id="chatTab"
+        class="hidden"
+      >
+
+        <div class="empty">
+
+          <h3>
+            Chat comes later.
+          </h3>
+
+          <p>
+            This will become the interactive layer for
+            project updates, clarification, retrieval and discussion.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<!-- ================= CREATE PROJECT MODAL ================= -->
+
+<div
+  id="modal"
+  class="modal-background"
+>
+
+  <div class="modal">
+
+    <h3>
+      Create Project
+    </h3>
+
+
+    <form
+      onsubmit="createProject(event)"
+    >
+
+      <!-- BASIC -->
+
+      <div class="form-group">
+
+        <label>
+          Project Name
+        </label>
+
+        <input
+          id="newName"
+          required
+          placeholder="e.g. Aether"
+        >
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Project Description
+        </label>
+
+        <textarea
+          id="newDescription"
+          placeholder="Describe the project in detail..."
+        ></textarea>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label>
+          Status / Type
+        </label>
+
+        <select id="newStatus">
+
+          <option value="active">
+            Active
+          </option>
+
+          <option value="future">
+            Future
+          </option>
+
+          <option value="paused">
+            Paused
+          </option>
+
+          <option value="completed">
+            Completed
+          </option>
+
+          <option value="archived">
+            Archived
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- SKILLS -->
+
+      <div class="form-group">
+
+        <label>
+          Skills Needed
+        </label>
+
+        <input
+          id="newSkills"
+          placeholder="Python, RAG, Knowledge Graphs"
+        >
+
+      </div>
+
+
+      <!-- TRAJECTORY -->
+
+      <div class="form-group">
+
+        <label>
+          Trajectory
+        </label>
+
+        <input
+          id="newTrajectory"
+          placeholder="Memory → Retrieval → KG"
+        >
+
+      </div>
+
+
+      <!-- FUTURE -->
+
+      <div class="form-group">
+
+        <label>
+          Future Scope
+        </label>
+
+        <textarea
+          id="newFutureScope"
+          placeholder="Possible future directions..."
+        ></textarea>
+
+      </div>
+
+
+      <!-- CONNECTED FIELDS -->
+
+      <div class="dynamic-section">
+
+        <div class="dynamic-header">
+
+          <h4>
+            Connected Fields
+          </h4>
+
+          <button
+            type="button"
+            class="add-small"
+            onclick="addConnectionRow()"
+          >
+            + Add field
+          </button>
+
+        </div>
+
+
+        <div id="connectionsContainer">
+
+          <div class="dynamic-row">
+
+            <input
+              class="connection-field"
+              placeholder="Field / area"
+            >
+
+            <input
+              class="connection-reason"
+              placeholder="How is it connected?"
+            >
+
+            <button
+              type="button"
+              class="remove-small"
+              onclick="removeRow(this)"
+            >
+              ×
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PEOPLE -->
+
+      <div class="dynamic-section">
+
+        <div class="dynamic-header">
+
+          <h4>
+            People To Approach
+          </h4>
+
+          <button
+            type="button"
+            class="add-small"
+            onclick="addPersonRow()"
+          >
+            + Add person
+          </button>
+
+        </div>
+
+
+        <div id="peopleContainer">
+
+          <div class="dynamic-row people-row">
+
+            <input
+              class="person-type"
+              placeholder="Type of person"
+            >
+
+            <input
+              class="person-name"
+              placeholder="Specific person"
+            >
+
+            <input
+              class="person-reason"
+              placeholder="Why approach them?"
+            >
+
+            <button
+              type="button"
+              class="remove-small"
+              onclick="removeRow(this)"
+            >
+              ×
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MODAL ACTIONS -->
+
+      <div class="modal-actions">
+
+        <button
+          type="button"
+          class="cancel-button"
+          onclick="closeCreateModal()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Create Project
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   TEMPORARY FRONTEND DATA
+   Later this will move into SQLite through FastAPI.
+   ========================================================= */
+
+let projects = [
+
+  {
+    id: "project-aether",
+
+    name: "Aether",
+
+    description:
+      "A personal AI system focused on persistent memory, retrieval, knowledge graphs and evolving user understanding.",
+
+    status: "active",
+
+    skills: [
+      "Python",
+      "LLMs",
+      "Memory Systems",
+      "RAG",
+      "Knowledge Graphs"
+    ],
+
+    connectedFields: [
+
+      {
+        field: "AI",
+        reason: "Core technology used by the project."
+      },
+
+      {
+        field: "Backend Engineering",
+        reason: "Required for persistent data, APIs and system infrastructure."
+      },
+
+      {
+        field: "Knowledge Systems",
+        reason: "The project needs structured representations of relationships and information."
+      }
+
+    ],
+
+    peopleToApproach: [
+
+      {
+        type: "AI / Memory Researcher",
+        name: "Specific researchers later",
+        reason: "Learn about long-term memory and personal AI architectures."
+      }
+
+    ],
+
+    futureScope:
+      "Personal cognitive infrastructure, richer retrieval, agents, evaluation and eventually a broader personal AI platform.",
+
+    trajectory:
+      "Memory → Retrieval → Knowledge Graph → Personal AI",
+
+    clusters: [
+      "Personal AI",
+      "Memory Systems"
+    ],
+
+    notes: []
+
+  }
+
+];
+
+
+let currentProject = null;
+
+
+/* =========================================================
+   HOME
+   ========================================================= */
+
+function renderProjects() {
+
+  const grid =
+    document.getElementById("projectGrid");
+
+  grid.innerHTML = "";
+
+
+  projects.forEach(project => {
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "project-card";
+
+
+    card.innerHTML = `
+
+      <div class="card-header">
+
+        <h3>
+          ${escapeHTML(project.name)}
+        </h3>
+
+        <span class="status">
+
+          <span
+            class="dot ${getStatusClass(project.status)}"
+          ></span>
+
+          ${escapeHTML(project.status)}
+
+        </span>
+
+      </div>
+
+
+      <p class="description">
+        ${escapeHTML(
+          project.description ||
+          "No description yet."
+        )}
+      </p>
+
+
+      <button class="open-button">
+        Open project →
+      </button>
+
+    `;
+
+
+    card
+      .querySelector(".open-button")
+      .onclick =
+        () => openProject(project.id);
+
+
+    grid.appendChild(card);
+
+  });
+
+}
+
+
+/* =========================================================
+   OPEN PROJECT
+   ========================================================= */
+
+function openProject(id) {
+
+  currentProject =
+    projects.find(
+      project => project.id === id
+    );
+
+
+  if (!currentProject) return;
+
+
+  document
+    .getElementById("homePage")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("projectPage")
+    .classList.remove("hidden");
+
+
+  document
+    .getElementById("projectName")
+    .textContent =
+      currentProject.name;
+
+
+  document
+    .getElementById("projectStatus")
+    .textContent =
+      currentProject.status.toUpperCase();
+
+
+  const dot =
+    document.getElementById("projectDot");
+
+  dot.className =
+    "dot " +
+    getStatusClass(
+      currentProject.status
+    );
+
+
+  document
+    .getElementById("description")
+    .textContent =
+      currentProject.description ||
+      "—";
+
+
+  document
+    .getElementById("trajectory")
+    .textContent =
+      currentProject.trajectory ||
+      "—";
+
+
+  document
+    .getElementById("futureScope")
+    .textContent =
+      currentProject.futureScope ||
+      "—";
+
+
+  document
+    .getElementById("statusValue")
+    .textContent =
+      currentProject.status;
+
+
+  renderSkills();
+
+  renderConnections();
+
+  renderPeople();
+
+  renderClusters();
+
+  renderNotes();
+
+
+  showDefaultTab();
+
+}
+
+
+/* =========================================================
+   SKILLS
+   ========================================================= */
+
+function renderSkills() {
+
+  const container =
+    document.getElementById("skills");
+
+  container.innerHTML = "";
+
+
+  if (
+    !currentProject.skills ||
+    currentProject.skills.length === 0
+  ) {
+
+    container.innerHTML =
+      `<span class="field-value">None yet.</span>`;
+
+    return;
+
+  }
+
+
+  currentProject.skills.forEach(skill => {
+
+    const tag =
+      document.createElement("span");
+
+    tag.className =
+      "tag";
+
+    tag.textContent =
+      skill;
+
+    container.appendChild(tag);
+
+  });
+
+}
+
+
+/* =========================================================
+   CONNECTED FIELDS
+   ========================================================= */
+
+function renderConnections() {
+
+  const container =
+    document.getElementById(
+      "connectionsList"
+    );
+
+  container.innerHTML = "";
+
+
+  if (
+    !currentProject.connectedFields ||
+    currentProject.connectedFields.length === 0
+  ) {
+
+    container.innerHTML = `
+      <div class="empty">
+        <p>No connected fields yet.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  currentProject.connectedFields
+    .forEach(connection => {
+
+      const element =
+        document.createElement("div");
+
+      element.className =
+        "connection";
+
+
+      element.innerHTML = `
+
+        <div class="connection-name">
+          ${escapeHTML(connection.field)}
+        </div>
+
+        <div class="connection-reason">
+          ${escapeHTML(connection.reason)}
+        </div>
+
+      `;
+
+
+      container.appendChild(element);
+
+    });
+
+}
+
+
+/* =========================================================
+   PEOPLE
+   ========================================================= */
+
+function renderPeople() {
+
+  const container =
+    document.getElementById(
+      "peopleList"
+    );
+
+  container.innerHTML = "";
+
+
+  if (
+    !currentProject.peopleToApproach ||
+    currentProject.peopleToApproach.length === 0
+  ) {
+
+    container.innerHTML = `
+      <div class="empty">
+        <p>No people defined yet.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  currentProject.peopleToApproach
+    .forEach(person => {
+
+      const element =
+        document.createElement("div");
+
+      element.className =
+        "person";
+
+
+      element.innerHTML = `
+
+        <div class="person-type">
+          ${escapeHTML(person.type)}
+        </div>
+
+        <div class="person-name">
+          ${escapeHTML(person.name)}
+        </div>
+
+        <div class="person-reason">
+          ${escapeHTML(person.reason)}
+        </div>
+
+      `;
+
+
+      container.appendChild(element);
+
+    });
+
+}
+
+
+/* =========================================================
+   CLUSTERS
+   ========================================================= */
+
+function renderClusters() {
+
+  const container =
+    document.getElementById(
+      "clusters"
+    );
+
+  container.innerHTML = "";
+
+
+  if (
+    !currentProject.clusters ||
+    currentProject.clusters.length === 0
+  ) {
+
+    container.innerHTML =
+      `<span class="field-value">
+        No clusters yet.
+      </span>`;
+
+    return;
+
+  }
+
+
+  currentProject.clusters.forEach(cluster => {
+
+    const tag =
+      document.createElement("span");
+
+    tag.className =
+      "tag";
+
+    tag.textContent =
+      cluster;
+
+    container.appendChild(tag);
+
+  });
+
+}
+
+
+/* =========================================================
+   NOTES
+   ========================================================= */
+
+function saveNote() {
+
+  const input =
+    document.getElementById(
+      "noteInput"
+    );
+
+
+  const rawData =
+    input.value.trim();
+
+
+  if (!rawData) return;
+
+
+  /*
+    IMPORTANT:
+
+    A note is intentionally simple.
+
+    id
+    project_id
+    created_at
+    raw_data
+
+    The raw_data is NEVER rewritten by the AI.
+  */
+
+  currentProject.notes.push({
+
+    id:
+      crypto.randomUUID(),
+
+    project_id:
+      currentProject.id,
+
+    created_at:
+      new Date().toISOString(),
+
+    raw_data:
+      rawData
+
+  });
+
+
+  input.value = "";
+
+
+  renderNotes();
+
+}
+
+
+function renderNotes() {
+
+  const history =
+    document.getElementById(
+      "notesHistory"
+    );
+
+
+  history.innerHTML = "";
+
+
+  if (
+    currentProject.notes.length === 0
+  ) {
+
+    history.innerHTML = `
+      <div class="empty">
+        <p>No notes yet. Write the first one.</p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  [
+    ...currentProject.notes
+  ]
+    .reverse()
+    .forEach(note => {
+
+      const element =
+        document.createElement("div");
+
+
+      element.className =
+        "note";
+
+
+      const date =
+        new Date(
+          note.created_at
+        );
+
+
+      element.innerHTML = `
+
+        <div class="note-date">
+          ${date.toLocaleString()}
+        </div>
+
+        <div class="note-text">
+          ${escapeHTML(note.raw_data)}
+        </div>
+
+      `;
+
+
+      history.appendChild(element);
+
+    });
+
+}
+
+
+/* =========================================================
+   TABS
+   ========================================================= */
+
+function showTab(tab, button) {
+
+  document
+    .querySelectorAll(".tab")
+    .forEach(element =>
+      element.classList.remove("active")
+    );
+
+
+  if (button) {
+    button.classList.add("active");
+  }
+
+
+  document
+    .getElementById("notesTab")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("overviewTab")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("chatTab")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById(tab + "Tab")
+    .classList.remove("hidden");
+
+}
+
+
+function showDefaultTab() {
+
+  const firstTab =
+    document.querySelector(".tab");
+
+  showTab(
+    "notes",
+    firstTab
+  );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function goHome() {
+
+  document
+    .getElementById("projectPage")
+    .classList.add("hidden");
+
+
+  document
+    .getElementById("homePage")
+    .classList.remove("hidden");
+
+
+  currentProject = null;
+
+}
+
+
+/* =========================================================
+   CREATE PROJECT MODAL
+   ========================================================= */
+
+function openCreateModal() {
+
+  document
+    .getElementById("modal")
+    .classList.add("open");
+
+}
+
+
+function closeCreateModal() {
+
+  document
+    .getElementById("modal")
+    .classList.remove("open");
+
+}
+
+
+/* =========================================================
+   CONNECTED FIELD ROW
+   ========================================================= */
+
+function addConnectionRow() {
+
+  const container =
+    document.getElementById(
+      "connectionsContainer"
+    );
+
+
+  const row =
+    document.createElement("div");
+
+
+  row.className =
+    "dynamic-row";
+
+
+  row.innerHTML = `
+
+    <input
+      class="connection-field"
+      placeholder="Field / area"
+    >
+
+    <input
+      class="connection-reason"
+      placeholder="How is it connected?"
+    >
+
+    <button
+      type="button"
+      class="remove-small"
+      onclick="removeRow(this)"
+    >
+      ×
+    </button>
+
+  `;
+
+
+  container.appendChild(row);
+
+}
+
+
+/* =========================================================
+   PEOPLE ROW
+   ========================================================= */
+
+function addPersonRow() {
+
+  const container =
+    document.getElementById(
+      "peopleContainer"
+    );
+
+
+  const row =
+    document.createElement("div");
+
+
+  row.className =
+    "dynamic-row people-row";
+
+
+  row.innerHTML = `
+
+    <input
+      class="person-type"
+      placeholder="Type of person"
+    >
+
+    <input
+      class="person-name"
+      placeholder="Specific person"
+    >
+
+    <input
+      class="person-reason"
+      placeholder="Why approach them?"
+    >
+
+    <button
+      type="button"
+      class="remove-small"
+      onclick="removeRow(this)"
+    >
+      ×
+    </button>
+
+  `;
+
+
+  container.appendChild(row);
+
+}
+
+
+/* =========================================================
+   REMOVE DYNAMIC ROW
+   ========================================================= */
+
+function removeRow(button) {
+
+  const row =
+    button.parentElement;
+
+
+  row.remove();
+
+}
+
+
+/* =========================================================
+   CREATE PROJECT
+   ========================================================= */
+
+function createProject(event) {
+
+  event.preventDefault();
+
+
+  const splitValues =
+    value =>
+      value
+        .split(",")
+        .map(x => x.trim())
+        .filter(Boolean);
+
+
+  /* ---------- CONNECTIONS ---------- */
+
+  const connectedFields = [];
+
+
+  document
+    .querySelectorAll(
+      "#connectionsContainer .dynamic-row"
+    )
+    .forEach(row => {
+
+      const field =
+        row
+          .querySelector(
+            ".connection-field"
+          )
+          .value
+          .trim();
+
+
+      const reason =
+        row
+          .querySelector(
+            ".connection-reason"
+          )
+          .value
+          .trim();
+
+
+      if (field) {
+
+        connectedFields.push({
+
+          field:
+            field,
+
+          reason:
+            reason
+
+        });
+
+      }
+
+    });
+
+
+  /* ---------- PEOPLE ---------- */
+
+  const peopleToApproach = [];
+
+
+  document
+    .querySelectorAll(
+      "#peopleContainer .dynamic-row"
+    )
+    .forEach(row => {
+
+      const type =
+        row
+          .querySelector(
+            ".person-type"
+          )
+          .value
+          .trim();
+
+
+      const name =
+        row
+          .querySelector(
+            ".person-name"
+          )
+          .value
+          .trim();
+
+
+      const reason =
+        row
+          .querySelector(
+            ".person-reason"
+          )
+          .value
+          .trim();
+
+
+      if (type || name) {
+
+        peopleToApproach.push({
+
+          type:
+            type,
+
+          name:
+            name,
+
+          reason:
+            reason
+
+        });
+
+      }
+
+    });
+
+
+  /* ---------- PROJECT ---------- */
+
+  const project = {
+
+    id:
+      crypto.randomUUID(),
+
+    name:
+      document
+        .getElementById("newName")
+        .value
+        .trim(),
+
+    description:
+      document
+        .getElementById("newDescription")
+        .value
+        .trim(),
+
+    status:
+      document
+        .getElementById("newStatus")
+        .value,
+
+    skills:
+      splitValues(
+        document
+          .getElementById("newSkills")
+          .value
+      ),
+
+    connectedFields:
+      connectedFields,
+
+    peopleToApproach:
+      peopleToApproach,
+
+    futureScope:
+      document
+        .getElementById("newFutureScope")
+        .value
+        .trim(),
+
+    trajectory:
+      document
+        .getElementById("newTrajectory")
+        .value
+        .trim(),
+
+    clusters: [],
+
+    notes: []
+
+  };
+
+
+  projects.push(project);
+
+
+  closeCreateModal();
+
+
+  event.target.reset();
+
+
+  /*
+    Reset dynamic sections
+    after project creation.
+  */
+
+  resetDynamicRows();
+
+
+  renderProjects();
+
+}
+
+
+/* =========================================================
+   RESET DYNAMIC FORM
+   ========================================================= */
+
+function resetDynamicRows() {
+
+  document.getElementById(
+    "connectionsContainer"
+  ).innerHTML = `
+
+    <div class="dynamic-row">
+
+      <input
+        class="connection-field"
+        placeholder="Field / area"
+      >
+
+      <input
+        class="connection-reason"
+        placeholder="How is it connected?"
+      >
+
+      <button
+        type="button"
+        class="remove-small"
+        onclick="removeRow(this)"
+      >
+        ×
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.getElementById(
+    "peopleContainer"
+  ).innerHTML = `
+
+    <div class="dynamic-row people-row">
+
+      <input
+        class="person-type"
+        placeholder="Type of person"
+      >
+
+      <input
+        class="person-name"
+        placeholder="Specific person"
+      >
+
+      <input
+        class="person-reason"
+        placeholder="Why approach them?"
+      >
+
+      <button
+        type="button"
+        class="remove-small"
+        onclick="removeRow(this)"
+      >
+        ×
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+function getStatusClass(status) {
+
+  const classes = {
+
+    active: "active",
+
+    future: "future",
+
+    paused: "paused",
+
+    completed: "completed"
+
+  };
+
+
+  return classes[status] || "";
+
+}
+
+
+/* =========================================================
+   BASIC HTML ESCAPING
+   ========================================================= */
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+renderProjects();
+
+</script>
+
+</body>
+</html>

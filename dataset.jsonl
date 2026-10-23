@@ -1,0 +1,10 @@
+{"input":"I studied DSA for 2 hours today.","target":"That is a productive signal. Record the study session and compare it with the planned duration."}
+{"input":"I wasted 4 hours scrolling today.","target":"That is a significant distraction signal. Look for what triggered the long scrolling session."}
+{"input":"I completed my planned workout.","target":"Good. Record the workout as completed and check whether this is becoming consistent."}
+{"input":"I planned to study but kept watching videos.","target":"The main signal is a failure to start rather than a lack of available time. Track this pattern across multiple days."}
+{"input":"I studied deep learning for 90 minutes.","target":"Record the session as focused learning. Compare this with your recent deep-learning activity."}
+{"input":"I slept at 3 AM again.","target":"This is a recurring sleep-pattern signal. Track its frequency before drawing a stronger conclusion."}
+{"input":"I finished a difficult programming problem.","target":"Record the problem as completed and note what concept made it difficult."}
+{"input":"I spent the whole evening doing nothing.","target":"Record the low-productivity period without overinterpreting it. Check whether similar periods are recurring."}
+{"input":"I worked on Aether for 3 hours.","target":"Record this as a significant project session and identify what concrete progress was made."}
+{"input":"I kept postponing my study session.","target":"This suggests a possible starting-friction pattern. Look for repeated postponement before forming a stronger observation."}
